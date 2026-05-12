@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Frigate Automation</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-950 text-slate-100">
+  <main class="mx-auto min-h-screen w-full max-w-5xl px-4 py-5 sm:px-6 lg:px-8">
+    <header class="flex flex-col gap-4 border-b border-slate-800 pb-5 sm:flex-row sm:items-center sm:justify-between">
+      <div>
+        <h1 class="text-2xl font-semibold tracking-tight">Frigate Automation</h1>
+        <p id="status-line" class="mt-1 text-sm text-blue-200">
+          MQTT: {{ status.connected }} | Sent: {{ status.sent }} | Error: {{ status.last_error or "none" }}
+        </p>
+      </div>
+      <a href="{{ url_for('logout') }}" class="inline-flex w-full justify-center rounded-md border border-slate-700 px-4 py-2 text-sm text-slate-100 hover:bg-slate-900 sm:w-auto">Logout</a>
+    </header>
+
+    <nav class="mt-5 grid grid-cols-2 rounded-lg border border-slate-800 bg-slate-900 p-1 text-sm">
+      <button type="button" class="tab-button rounded-md bg-blue-600 px-3 py-2 font-medium text-white" data-tab="config">Configuration</button>
+      <button type="button" class="tab-button rounded-md px-3 py-2 font-medium text-slate-300" data-tab="logs">Live Logs</button>
+    </nav>
+
+    <section id="config-tab" class="tab-panel mt-5">
+      {% include "partials/config_form.html" %}
+    </section>
+
+    <section id="logs-tab" class="tab-panel mt-5 hidden">
+      {% include "partials/logs.html" %}
+    </section>
+  </main>
+  <script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>

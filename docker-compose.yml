@@ -1,0 +1,13 @@
+services:
+  frigate-automation:
+    build: .
+    container_name: frigate-automation
+    restart: unless-stopped
+    ports:
+      - "5100:5100"
+    environment:
+      APP_SECRET: "change-me"
+      ADMIN_PASSWORD: "change-me"
+      FRIGATE_AUTOMATION_CONFIG: /data/config.json
+    volumes:
+      - ./data:/data

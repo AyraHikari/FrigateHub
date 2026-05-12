@@ -1,0 +1,44 @@
+<div class="rounded-lg border border-slate-800 bg-slate-900">
+  <div class="flex flex-col gap-4 border-b border-slate-800 p-4">
+    <div>
+      <h2 class="text-lg font-semibold">Live Logs</h2>
+      <p class="text-sm text-slate-400">Recent MQTT, filter, and notification decisions.</p>
+    </div>
+    <div class="grid gap-2 sm:grid-cols-[1fr_auto_auto_auto_auto] sm:items-center">
+      <label class="text-sm text-slate-300">
+        Refresh time
+        <select id="log-refresh-interval" class="mt-1 w-full rounded-md border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-slate-100">
+          <option value="1000">1s</option>
+          <option value="3000" selected>3s</option>
+          <option value="5000">5s</option>
+          <option value="10000">10s</option>
+        </select>
+      </label>
+      <button id="toggle-log-refresh" type="button" class="rounded-md border border-slate-700 px-3 py-2 text-sm hover:bg-slate-800">Pause</button>
+      <button id="refresh-logs" type="button" class="rounded-md border border-slate-700 px-3 py-2 text-sm hover:bg-slate-800">Refresh</button>
+      <button id="copy-selected-logs" type="button" class="rounded-md border border-slate-700 px-3 py-2 text-sm hover:bg-slate-800">Copy selected</button>
+      <button id="copy-visible-logs" type="button" class="rounded-md border border-slate-700 px-3 py-2 text-sm hover:bg-slate-800">Copy visible</button>
+    </div>
+    <p id="copy-log-status" class="hidden text-sm text-blue-200"></p>
+  </div>
+  <div id="log-list" class="divide-y divide-slate-800">
+    {% for log in logs %}
+      <article class="log-entry p-4" data-log-id="{{ log.time }}|{{ log.level }}|{{ log.message }}|{{ loop.index0 }}" data-log-text="{{ (log.time ~ ' | ' ~ log.level ~ ' | ' ~ log.message ~ '\n' ~ (log.fields | tojson(indent=2))) | e }}">
+        <div class="flex gap-3">
+          <input type="checkbox" class="log-select mt-1 h-4 w-4 rounded border-slate-700 bg-slate-950">
+          <div class="min-w-0 flex-1">
+            <div class="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
+              <p class="font-medium text-slate-100">{{ log.message }}</p>
+              <p class="text-xs text-slate-500">{{ log.time }} | {{ log.level }}</p>
+            </div>
+            {% if log.fields %}
+              <pre class="mt-2 overflow-x-auto rounded-md bg-slate-950 p-3 text-xs text-slate-300">{{ log.fields }}</pre>
+            {% endif %}
+          </div>
+        </div>
+      </article>
+    {% else %}
+      <p class="p-4 text-sm text-slate-400">No logs yet.</p>
+    {% endfor %}
+  </div>
+</div>

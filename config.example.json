@@ -1,0 +1,75 @@
+{
+  "enabled": true,
+  "mqtt": {
+    "host": "127.0.0.1",
+    "port": 1883,
+    "username": "",
+    "password": "",
+    "topic": "frigate/reviews",
+    "client_id": "frigate-native-automation"
+  },
+  "notifications": {
+    "enabled": true,
+    "tokens": [],
+    "fcm_api_url": "https://ayra.eu.org/project/frigate/fcm",
+    "base_url": "http://frigate.local:5000",
+    "title": "{{ label }} detected - {{ camera_name }}",
+    "message": "{{ label }} was detected on the {{ camera_name }} camera.",
+    "subtitle": "",
+    "expanded_thumbnail": "photo",
+    "attachment": "{{ base_url }}/api/events/{{ event_id }}/thumbnail.jpg",
+    "attachment_2": "{{ base_url }}/api/events/{{ event_id }}/thumbnail.jpg",
+    "video": "",
+    "final_update": false,
+    "final_delay": 5,
+    "alert_once": false,
+    "color": "#03a9f4",
+    "group": "{{ camera }}-frigate-notification",
+    "channel": "Default",
+    "sticky": false,
+    "critical": false,
+    "android_auto": false,
+    "buttons": [
+      {
+        "title": "View Snapshot",
+        "url": "{{ attachment }}"
+      },
+      {
+        "title": "View Clip",
+        "url": "{{ clip }}"
+      },
+      {
+        "title": "Open Frigate",
+        "url": "{{ base_url }}"
+      }
+    ]
+  },
+  "filters": {
+    "cameras": [],
+    "review_severity": ["alert", "detection"],
+    "zones_enabled": false,
+    "zones": [],
+    "zone_multi": false,
+    "zone_order_enforced": false,
+    "labels": [],
+    "disable_hours": [],
+    "custom_filter": "true"
+  },
+  "timers": {
+    "cooldown": 0,
+    "timeout": 2,
+    "silence_timer": 0,
+    "loiter_timer": 0,
+    "initial_delay": 0
+  },
+  "telegram": {
+    "enabled": false,
+    "bot_token": "",
+    "chat_id": "",
+    "base_url": ""
+  },
+  "debug": {
+    "enabled": false,
+    "redacted": true
+  }
+}

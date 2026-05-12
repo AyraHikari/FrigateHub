@@ -1,0 +1,78 @@
+<form method="post" class="space-y-4">
+  <details open class="overflow-hidden rounded-lg border border-slate-800 bg-slate-900">
+    <summary class="cursor-pointer px-4 py-3 text-lg font-semibold">Connection</summary>
+    <div class="space-y-4 border-t border-slate-800 p-4">
+      <label class="field">Enabled <span class="hint">Turns the MQTT listener on or off without deleting configuration.</span><select name="enabled" class="control"><option value="true" {{ "selected" if config.enabled }}>Yes</option><option value="false" {{ "selected" if not config.enabled }}>No</option></select></label>
+      <label class="field">MQTT Host <span class="hint">Broker hostname or IP that Frigate publishes review messages to.</span><input name="mqtt.host" value="{{ config.mqtt.host }}" class="control"></label>
+      <label class="field">MQTT Port <span class="hint">Broker TCP port, usually 1883 for plain MQTT.</span><input name="mqtt.port" value="{{ config.mqtt.port }}" class="control"></label>
+      <label class="field">MQTT Username <span class="hint">Optional MQTT username.</span><input name="mqtt.username" value="{{ config.mqtt.username }}" class="control"></label>
+      <label class="field">MQTT Password <span class="hint">Optional MQTT password.</span><input name="mqtt.password" type="password" value="{{ config.mqtt.password }}" class="control"></label>
+      <label class="field">MQTT Topic <span class="hint">Frigate review topic. The Home Assistant blueprint default is frigate/reviews.</span><input name="mqtt.topic" value="{{ config.mqtt.topic }}" class="control"></label>
+      <label class="field">Client ID <span class="hint">MQTT client id prefix. Keep unique when running multiple automation servers.</span><input name="mqtt.client_id" value="{{ config.mqtt.client_id }}" class="control"></label>
+      <label class="field">FCM API URL <span class="hint">Your web server endpoint that forwards notification JSON to FCM.</span><input name="notifications.fcm_api_url" value="{{ config.notifications.fcm_api_url }}" class="control"></label>
+      <label class="field">Frigate API Base URL <span class="hint">Direct Frigate URL used for thumbnails, snapshots, clips, and GIF previews.</span><input name="notifications.base_url" value="{{ config.notifications.base_url }}" class="control"></label>
+    </div>
+  </details>
+
+  <details class="overflow-hidden rounded-lg border border-slate-800 bg-slate-900">
+    <summary class="cursor-pointer px-4 py-3 text-lg font-semibold">Notification</summary>
+    <div class="space-y-4 border-t border-slate-800 p-4">
+      <label class="field">Enable FCM Notifications <span class="hint">If disabled, FCM sends are skipped and Telegram can still send.</span><select name="notifications.enabled" class="control"><option value="true" {{ "selected" if config.notifications.enabled }}>Yes</option><option value="false" {{ "selected" if not config.notifications.enabled }}>No</option></select></label>
+      <div class="field chip-field" data-chip-kind="fcm-token"><span>FCM Tokens</span><span class="hint">Frigate Native app subscribe tokens. Select one chip to test one token, or test every token.</span><textarea class="chip-values sr-only" name="notifications.tokens">{{ config.notifications.tokens|join("\\n") }}</textarea><div class="chip-list"></div><div class="flex gap-2"><input class="chip-input control min-w-0 flex-1" type="text" autocomplete="off"><button class="chip-add btn" type="button">+</button></div><div class="flex flex-wrap gap-2"><button id="test-selected-fcm-token" class="rounded-md border border-slate-700 px-3 py-2 text-sm hover:bg-slate-800" type="button">Test selected token</button><button id="test-all-fcm-tokens" class="rounded-md border border-slate-700 px-3 py-2 text-sm hover:bg-slate-800" type="button">Test all tokens</button></div><p id="fcm-test-status" class="hidden text-sm text-blue-200"></p></div>
+      <label class="field">Title Template <span class="hint">Optional notification title. Leave blank to use the detected objects.</span><input name="notifications.title" value="{{ config.notifications.title }}" class="control"></label>
+      <label class="field">Message Template <span class="hint">Available variables include {{ '{{ label }}' }}, {{ '{{ camera_name }}' }}, {{ '{{ after_zones }}' }}, {{ '{{ event_id }}' }}, and {{ '{{ review_id }}' }}.</span><textarea name="notifications.message" class="control min-h-24">{{ config.notifications.message }}</textarea></label>
+      <label class="field">Subtitle Template <span class="hint">Secondary notification heading sent as subject and subtitle.</span><input name="notifications.subtitle" value="{{ config.notifications.subtitle }}" class="control"></label>
+      <label class="field">Initial Attachment <span class="hint">Image or GIF for the first notification.</span><textarea name="notifications.attachment" class="control min-h-20">{{ config.notifications.attachment }}</textarea></label>
+      <label class="field">Subsequent Attachment <span class="hint">Image or GIF for updates. Leave blank to keep using the initial attachment.</span><textarea name="notifications.attachment_2" class="control min-h-20">{{ config.notifications.attachment_2 }}</textarea></label>
+      <label class="field">Video Template <span class="hint">Optional clip, stream, or GIF URL. Use {{ '{{ clip }}' }} for the direct Frigate event clip.</span><textarea name="notifications.video" class="control min-h-20">{{ config.notifications.video }}</textarea></label>
+      <label class="field">Expanded Thumbnail <span class="hint">Choose whether Frigate Native expands notifications with a still photo or GIF preview.</span><select name="notifications.expanded_thumbnail" class="control"><option value="photo" {{ "selected" if config.notifications.expanded_thumbnail == "photo" }}>Photo</option><option value="gif" {{ "selected" if config.notifications.expanded_thumbnail == "gif" }}>GIF</option></select></label>
+      <label class="field">Group Template <span class="hint">Notification group key. Include {{ '{{ camera }}' }} to group separately by camera.</span><input name="notifications.group" value="{{ config.notifications.group }}" class="control"></label>
+      <label class="field">Color <span class="hint">Android notification color, such as #03a9f4.</span><input name="notifications.color" value="{{ config.notifications.color }}" class="control"></label>
+      <label class="field">Channel <span class="hint">Android notification channel. Critical notifications use alarm_stream.</span><input name="notifications.channel" value="{{ config.notifications.channel }}" class="control"></label>
+      <label class="field">Final Update <span class="hint">Send an update when Frigate marks the review as ended.</span><select name="notifications.final_update" class="control"><option value="true" {{ "selected" if config.notifications.final_update }}>Yes</option><option value="false" {{ "selected" if not config.notifications.final_update }}>No</option></select></label>
+      <label class="field">Final Delay Seconds <span class="hint">Delay before final update so Frigate has time to finish media generation.</span><input name="notifications.final_delay" value="{{ config.notifications.final_delay }}" class="control"></label>
+      <label class="field">Alert Once <span class="hint">Only the first notification for a review plays sound.</span><select name="notifications.alert_once" class="control"><option value="true" {{ "selected" if config.notifications.alert_once }}>Yes</option><option value="false" {{ "selected" if not config.notifications.alert_once }}>No</option></select></label>
+      <label class="field">Critical <span class="hint">Use the alarm stream channel for urgent Android notifications.</span><select name="notifications.critical" class="control"><option value="true" {{ "selected" if config.notifications.critical }}>Yes</option><option value="false" {{ "selected" if not config.notifications.critical }}>No</option></select></label>
+      <label class="field">Sticky <span class="hint">Keep notifications visible until dismissed where the client supports it.</span><select name="notifications.sticky" class="control"><option value="true" {{ "selected" if config.notifications.sticky }}>Yes</option><option value="false" {{ "selected" if not config.notifications.sticky }}>No</option></select></label>
+      <label class="field">Android Auto <span class="hint">Marks the notification as car UI compatible.</span><select name="notifications.android_auto" class="control"><option value="true" {{ "selected" if config.notifications.android_auto }}>Yes</option><option value="false" {{ "selected" if not config.notifications.android_auto }}>No</option></select></label>
+    </div>
+  </details>
+
+  <details class="overflow-hidden rounded-lg border border-slate-800 bg-slate-900">
+    <summary class="cursor-pointer px-4 py-3 text-lg font-semibold">Filters</summary>
+    <div class="space-y-4 border-t border-slate-800 p-4">
+      <div class="field chip-field"><span>Cameras</span><span class="hint">Only notify for these Frigate camera names. Leave empty for all cameras.</span><textarea class="chip-values sr-only" name="filters.cameras">{{ config.filters.cameras|join("\\n") }}</textarea><div class="chip-list"></div><div class="flex gap-2"><input class="chip-input control min-w-0 flex-1" type="text" autocomplete="off"><button class="chip-add btn" type="button">+</button></div></div>
+      <div class="field"><span>Severities</span><span class="hint">Allowed review severities.</span><textarea class="severity-values sr-only" name="filters.review_severity">{{ config.filters.review_severity|join("\\n") }}</textarea><div class="flex flex-wrap gap-2"><label class="check-card"><input class="severity-check" type="checkbox" value="alert" {{ "checked" if "alert" in config.filters.review_severity }}> Alert</label><label class="check-card"><input class="severity-check" type="checkbox" value="detection" {{ "checked" if "detection" in config.filters.review_severity }}> Detection</label></div></div>
+      <div class="field chip-field"><span>Labels / Objects</span><span class="hint">Only notify when the review label, sub-label, object, or attribute matches.</span><textarea class="chip-values sr-only" name="filters.labels">{{ config.filters.labels|join("\\n") }}</textarea><div class="chip-list"></div><div class="flex gap-2"><input class="chip-input control min-w-0 flex-1" type="text" autocomplete="off"><button class="chip-add btn" type="button">+</button></div></div>
+      <label class="field">Zone Filter <span class="hint">Require at least one matching Frigate zone before sending.</span><select name="filters.zones_enabled" class="control"><option value="true" {{ "selected" if config.filters.zones_enabled }}>Yes</option><option value="false" {{ "selected" if not config.filters.zones_enabled }}>No</option></select></label>
+      <div class="field chip-field"><span>Zones</span><span class="hint">Zone names from Frigate, lowercase and underscore-formatted as in your config.</span><textarea class="chip-values sr-only" name="filters.zones">{{ config.filters.zones|join("\\n") }}</textarea><div class="chip-list"></div><div class="flex gap-2"><input class="chip-input control min-w-0 flex-1" type="text" autocomplete="off"><button class="chip-add btn" type="button">+</button></div></div>
+      <label class="field">Require All Zones <span class="hint">Require every configured zone instead of any configured zone.</span><select name="filters.zone_multi" class="control"><option value="true" {{ "selected" if config.filters.zone_multi }}>Yes</option><option value="false" {{ "selected" if not config.filters.zone_multi }}>No</option></select></label>
+      <label class="field">Enforce Zone Order <span class="hint">When all zones are required, only pass if zones are entered in configured order.</span><select name="filters.zone_order_enforced" class="control"><option value="true" {{ "selected" if config.filters.zone_order_enforced }}>Yes</option><option value="false" {{ "selected" if not config.filters.zone_order_enforced }}>No</option></select></label>
+      <div class="field chip-field"><span>Disabled Hours 0-23</span><span class="hint">Hours when notifications are disabled. Uses the server local time.</span><textarea class="chip-values sr-only" name="filters.disable_hours">{{ config.filters.disable_hours|join("\\n") }}</textarea><div class="chip-list"></div><div class="flex gap-2"><input class="chip-input control min-w-0 flex-1" type="number" min="0" max="23"><button class="chip-add btn" type="button">+</button></div></div>
+      <label class="field">Custom Filter Template <span class="hint">Advanced Jinja expression that renders true or false.</span><textarea name="filters.custom_filter" class="control min-h-24">{{ config.filters.custom_filter }}</textarea></label>
+    </div>
+  </details>
+
+  <details class="overflow-hidden rounded-lg border border-slate-800 bg-slate-900">
+    <summary class="cursor-pointer px-4 py-3 text-lg font-semibold">Timers</summary>
+    <div class="space-y-4 border-t border-slate-800 p-4">
+      <label class="field">Cooldown Seconds <span class="hint">Minimum time between notification starts.</span><input name="timers.cooldown" value="{{ config.timers.cooldown }}" class="control"></label>
+      <label class="field">Timeout Minutes <span class="hint">Reserved for Home Assistant blueprint parity.</span><input name="timers.timeout" value="{{ config.timers.timeout }}" class="control"></label>
+      <label class="field">Silence Timer Minutes <span class="hint">Reserved for temporary notification silence parity.</span><input name="timers.silence_timer" value="{{ config.timers.silence_timer }}" class="control"></label>
+      <label class="field">Loiter Timer Minutes <span class="hint">Reserved for stationary object loitering parity.</span><input name="timers.loiter_timer" value="{{ config.timers.loiter_timer }}" class="control"></label>
+      <label class="field">Initial Delay Seconds <span class="hint">Wait before sending the first new review notification.</span><input name="timers.initial_delay" value="{{ config.timers.initial_delay }}" class="control"></label>
+    </div>
+  </details>
+
+  <details class="overflow-hidden rounded-lg border border-slate-800 bg-slate-900">
+    <summary class="cursor-pointer px-4 py-3 text-lg font-semibold">Telegram</summary>
+    <div class="space-y-4 border-t border-slate-800 p-4">
+      <label class="field">Enabled <span class="hint">Also send matching notifications to Telegram.</span><select name="telegram.enabled" class="control"><option value="true" {{ "selected" if config.telegram.enabled }}>Yes</option><option value="false" {{ "selected" if not config.telegram.enabled }}>No</option></select></label>
+      <label class="field">Bot Token <span class="hint">Telegram bot token from BotFather.</span><input name="telegram.bot_token" type="password" value="{{ config.telegram.bot_token }}" class="control"></label>
+      <label class="field">Chat ID <span class="hint">Telegram chat id to receive notifications.</span><input name="telegram.chat_id" value="{{ config.telegram.chat_id }}" class="control"></label>
+      <label class="field">Media Base URL <span class="hint">Optional internal media URL override for Telegram downloads.</span><input name="telegram.base_url" value="{{ config.telegram.base_url }}" class="control"></label>
+    </div>
+  </details>
+
+  <button class="w-full rounded-md bg-blue-600 px-4 py-3 text-sm font-medium text-white hover:bg-blue-500 sm:w-auto">Save and restart listener</button>
+</form>
