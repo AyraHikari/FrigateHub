@@ -10,6 +10,8 @@ Built with Kotlin and Material You, the app focuses on fast media playback, mult
 
 ## Download
 
+- Currently being internal testing. [Send form to join the list!](https://docs.google.com/forms/d/e/1FAIpQLSeTMVgfwQEzTV-R1aZf-bU8xdn42_f0KiUQIM-TtR67dVBpcg/viewform?usp=publish-editor)
+
 <p>
   <a href="https://play.google.com/store/apps/details?id=me.ayra.frigate">
     <img alt="Get it on Google Play" src="assets/googleplay.png" width="200">
@@ -69,7 +71,9 @@ Then configure:
 - FrigateHub FCM tokens
 
 > [!TIP]
-> See [Privacy Policy](https://ayra.eu.org/project/frigate/privacy_policy) for how app data, Frigate media, MQTT, and FCM notification data are handled.
+> All of your events data won't ever be saved on my server. It will go directly processed on Google Firebase Cloud Messaging API.
+> You can opt-out to my server and change to your API server instead by changing fcm_api_url in the docker host.
+> See [Privacy Policy](https://ayra.eu.org/project/frigate/privacy_policy) for more informations.
 
 ## Roadmap
 
@@ -99,7 +103,6 @@ Then configure:
 - Chromecast support
 - License plate recognition UI
 - Classification object/state UI
-- Periodic background event polling
 
 ## Tech Stack
 
