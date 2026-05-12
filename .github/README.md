@@ -53,7 +53,8 @@ FrigateHub supports two notification paths:
 To run the companion automation server:
 
 ```bash
-cd automation-server
+git clone https://github.com/AyraHikari/FrigateHub -o frigate-automation-server
+cd frigate-automation-server
 docker compose up -d --build
 ```
 
